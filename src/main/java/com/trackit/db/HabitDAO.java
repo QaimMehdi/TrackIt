@@ -123,7 +123,15 @@ public class HabitDAO {
         return tasks;
     }
 
-    private void generateTasks(Habit habit) throws SQLException {
+    public void deleteTasksForHabit(int habitId) throws SQLException {
+        String sql = "DELETE FROM tasks WHERE habit_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, habitId);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void generateTasks(Habit habit) throws SQLException {
         LocalDateTime startDate = habit.getStartDate();
         int goalDays = habit.getGoalDays();
         int frequency = habit.getFrequency();

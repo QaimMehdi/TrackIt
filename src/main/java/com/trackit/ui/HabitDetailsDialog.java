@@ -298,6 +298,23 @@ public class HabitDetailsDialog extends JDialog {
         }
 
         try {
+            // Check if frequency or goal days have changed
+            boolean frequencyChanged = habit.getFrequency() != (Integer) frequencySpinner.getValue();
+            boolean goalDaysChanged = habit.getGoalDays() != (Integer) goalDaysSpinner.getValue();
+            
+            // If either changed, ask user for confirmation
+            if (frequencyChanged || goalDaysChanged) {
+                int confirm = JOptionPane.showConfirmDialog(this,
+                    "Changing frequency or goal days will reset all tasks and progress. Continue?",
+                    "Confirm Changes",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+                
+                if (confirm != JOptionPane.YES_OPTION) {
+                    return;
+                }
+            }
+
             // Update habit details
             habit.setName(nameField.getText().trim());
             habit.setGoalDays((Integer) goalDaysSpinner.getValue());
@@ -308,27 +325,49 @@ public class HabitDetailsDialog extends JDialog {
                 ZoneId.systemDefault()
             ));
 
-            // Update task statuses
-            for (int i = 0; i < tableModel.getRowCount(); i++) {
-                Task task = habit.getTasks().get(i);
-                String newStatus = (String) tableModel.getValueAt(i, 1);
-                if (!task.getStatus().equals(newStatus)) {
-                    task.setStatus(newStatus);
-                    if (newStatus.equals(Task.Status.COMPLETED.name())) {
-                        task.setCompletionDate(LocalDateTime.now());
-                    } else {
-                        task.setCompletionDate(null);
+            // If frequency or goal days changed, delete old tasks and generate new ones
+            if (frequencyChanged || goalDaysChanged) {
+                // First delete all existing tasks
+                taskDAO.deleteTasksForHabit(habit.getId());
+                
+                // Save the basic habit details first
+                habitDAO.updateHabit(habit);
+                
+                // Generate new tasks
+                habitDAO.generateTasks(habit);
+                
+                // Reload the habit to get the new tasks
+                habit.setTasks(taskDAO.getTasksForHabit(habit.getId()));
+                
+                // Refresh the table
+                loadData();
+            } else {
+                // Update task statuses
+                for (int i = 0; i < tableModel.getRowCount(); i++) {
+                    Task task = habit.getTasks().get(i);
+                    String newStatus = (String) tableModel.getValueAt(i, 1);
+                    if (!task.getStatus().equals(newStatus)) {
+                        task.setStatus(newStatus);
+                        if (newStatus.equals(Task.Status.COMPLETED.name())) {
+                            task.setCompletionDate(LocalDateTime.now());
+                        } else {
+                            task.setCompletionDate(null);
+                        }
+                        // Save each task update to the database
+                        taskDAO.updateTask(task);
                     }
-                    // Save each task update to the database
-                    taskDAO.updateTask(task);
                 }
-            }
 
-            // Save habit to database
-            habitDAO.updateHabit(habit);
-            updateProgress();
+                // Save habit to database
+                habitDAO.updateHabit(habit);
+            }
+            
             confirmed = true;
-            dispose();
+            updateProgress();
+            JOptionPane.showMessageDialog(this,
+                "Habit updated successfully!",
+                "Success",
+                JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this,
                 "Error saving habit: " + e.getMessage(),

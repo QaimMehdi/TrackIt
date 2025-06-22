@@ -43,27 +43,27 @@ public class MainWindow extends JFrame {
             System.err.println("Could not load application icon: " + e.getMessage());
         }
         
-        initComponents();
-        loadHabits();
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1000, 700);
-        setLocationRelativeTo(null);
-        setMinimumSize(new Dimension(800, 600));
+        initComponents(); //ui builds
+        loadHabits(); //load habit from database
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //close krny k liye
+        setSize(1000, 700); //window size   
+        setLocationRelativeTo(null); //center krny k liye
+        setMinimumSize(new Dimension(800, 600)); //minimum size
     }
 
     private void initComponents() {
-        setLayout(new BorderLayout(15, 15));
-        ((JPanel)getContentPane()).setBorder(new EmptyBorder(10, 10, 10, 10));
+        setLayout(new BorderLayout(15, 15)); //15px ka gap bw layouts
+        ((JPanel)getContentPane()).setBorder(new EmptyBorder(10, 10, 10, 10)); //10px ka gap bw content and border
         
-        // Header Panel with gradient
+        // header panel
         JPanel headerPanel = createHeaderPanel();
         add(headerPanel, BorderLayout.NORTH);
 
-        // Main content panel with list and stats
+        // main content panel with list and stats
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setBorder(null);
-        splitPane.setDividerLocation(650);
-        splitPane.setResizeWeight(0.7);
+        splitPane.setDividerLocation(650); //650 px ka divider for lef panel
+        splitPane.setResizeWeight(0.7); //70% weight
         
         // Habits list panel
         JPanel habitsPanel = new JPanel(new BorderLayout(10, 10));
@@ -291,7 +291,7 @@ public class MainWindow extends JFrame {
         }
     }
 
-    private void showHabitDetails() {
+    public void showHabitDetails() {
         Habit selectedHabit = habitList.getSelectedValue();
         if (selectedHabit != null) {
             try {

@@ -9,7 +9,10 @@ import com.trackit.model.Habit;
 import com.trackit.db.HabitDAO;
 import java.sql.SQLException;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.border.MatteBorder;
+import javax.imageio.ImageIO;
 
 public class MainWindow extends JFrame {
     private JPanel contentPane;
@@ -18,6 +21,7 @@ public class MainWindow extends JFrame {
     private JButton addHabitButton;
     private JButton viewDetailsButton;
     private JButton deleteHabitButton;
+    private JToggleButton darkModeToggle;
     private JProgressBar progressBar;
     private JProgressBar overallProgressBar;
     private JLabel totalHabitsLabel;
@@ -28,6 +32,17 @@ public class MainWindow extends JFrame {
     public MainWindow() {
         super("TrackIt - Habit Tracker");
         this.habitDAO = new HabitDAO();
+        
+        // Set application icon
+        try {
+            Image icon = ImageIO.read(getClass().getResourceAsStream("/trackit.png"));
+            if (icon != null) {
+                setIconImage(icon);
+            }
+        } catch (Exception e) {
+            System.err.println("Could not load application icon: " + e.getMessage());
+        }
+        
         initComponents();
         loadHabits();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -139,6 +154,16 @@ public class MainWindow extends JFrame {
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         toolbar.setOpaque(false);
 
+        // Dark mode toggle
+        darkModeToggle = new JToggleButton();
+        darkModeToggle.setIcon(new FlatSVGIcon("icons/light-mode.svg"));
+        darkModeToggle.setSelectedIcon(new FlatSVGIcon("icons/dark-mode.svg"));
+        darkModeToggle.setToolTipText("Toggle Dark Mode");
+        darkModeToggle.putClientProperty("FlatLaf.style", "arc: 999; background: #00000022");
+        darkModeToggle.setPreferredSize(new Dimension(32, 32));
+        darkModeToggle.setFocusPainted(false);
+        darkModeToggle.setBorderPainted(false);
+        
         addHabitButton = new JButton("New Habit");
         addHabitButton.setFont(addHabitButton.getFont().deriveFont(Font.BOLD));
         addHabitButton.putClientProperty("FlatLaf.style", "foreground: #000000");
@@ -151,6 +176,8 @@ public class MainWindow extends JFrame {
         deleteHabitButton.setEnabled(false);
         deleteHabitButton.putClientProperty("FlatLaf.style", "foreground: #000000");
 
+        toolbar.add(darkModeToggle);
+        toolbar.add(Box.createHorizontalStrut(15));
         toolbar.add(addHabitButton);
         toolbar.add(viewDetailsButton);
         toolbar.add(deleteHabitButton);
@@ -230,6 +257,8 @@ public class MainWindow extends JFrame {
         addHabitButton.addActionListener(e -> showAddHabitDialog());
         viewDetailsButton.addActionListener(e -> showHabitDetails());
         deleteHabitButton.addActionListener(e -> deleteSelectedHabit());
+
+        darkModeToggle.addActionListener(e -> toggleDarkMode());
 
         habitList.addListSelectionListener(e -> {
             boolean hasSelection = !habitList.isSelectionEmpty();
@@ -347,6 +376,31 @@ public class MainWindow extends JFrame {
             progressBar.setString("");
         }
         updateStatistics();
+    }
+
+    private void toggleDarkMode() {
+        try {
+            boolean isDarkMode = darkModeToggle.isSelected();
+            UIManager.setLookAndFeel(isDarkMode ? new FlatDarkLaf() : new FlatLightLaf());
+            SwingUtilities.updateComponentTreeUI(this);
+            
+            // Update button colors based on theme
+            String textColor = isDarkMode ? "#FFFFFF" : "#000000";
+            addHabitButton.putClientProperty("FlatLaf.style", "foreground: " + textColor);
+            viewDetailsButton.putClientProperty("FlatLaf.style", "foreground: " + textColor);
+            deleteHabitButton.putClientProperty("FlatLaf.style", "foreground: " + textColor);
+            
+            // Update toggle button style
+            darkModeToggle.putClientProperty("FlatLaf.style", 
+                "arc: 999; background: " + (isDarkMode ? "#FFFFFF22" : "#00000022"));
+            
+            // Ensure the window decorations are updated
+            dispose();
+            setUndecorated(false);
+            setVisible(true);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     private class ModernHabitListCellRenderer extends DefaultListCellRenderer {

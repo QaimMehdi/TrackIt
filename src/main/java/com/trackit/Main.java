@@ -7,6 +7,7 @@ import com.trackit.ui.MainWindow;
 
 import javax.swing.*;
 import java.awt.*;
+import javax.imageio.ImageIO;
 
 public class Main {
     public static void main(String[] args) {
@@ -29,6 +30,18 @@ public class Main {
         UIManager.put("ScrollBar.thumbArc", 999);
         UIManager.put("ScrollBar.trackInsets", new Insets(2, 4, 2, 4));
         UIManager.put("ScrollBar.thumbInsets", new Insets(2, 2, 2, 2));
+        UIManager.put("TitlePane.unifiedBackground", true);
+        UIManager.put("TitlePane.centerTitle", true);
+
+        // Set application icon
+        try {
+            Image icon = ImageIO.read(Main.class.getResourceAsStream("/trackit.png"));
+            if (icon != null) {
+                UIManager.put("Frame.icon", new ImageIcon(icon));
+            }
+        } catch (Exception e) {
+            System.err.println("Could not load application icon: " + e.getMessage());
+        }
 
         // Launch application
         SwingUtilities.invokeLater(() -> {

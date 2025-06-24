@@ -1,0 +1,143 @@
+[33mcommit 68e40010697f33a649a531899ea592e6265119ec[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Qaim Mehdi <qaimmehdi2017@gmail.com>
+Date:   Tue Jun 24 23:01:35 2025 +0500
+
+    Added database schema and documentation
+
+[1mdiff --git a/src/main/java/com/trackit/Main.java b/src/main/java/com/trackit/Main.java[m
+[1mindex 3c38bfa..dbbec75 100644[m
+[1m--- a/src/main/java/com/trackit/Main.java[m
+[1m+++ b/src/main/java/com/trackit/Main.java[m
+[36m@@ -54,7 +54,7 @@[m [mpublic class Main {[m
+                     "Error starting application: " + e.getMessage(),[m
+                     "Error",[m
+                     JOptionPane.ERROR_MESSAGE);[m
+[31m-            }[m
+[32m+[m[32m            } //run[m[41m [m
+         });[m
+     }[m
+ } [m
+\ No newline at end of file[m
+[1mdiff --git a/src/main/java/com/trackit/db/DBConnection.java b/src/main/java/com/trackit/db/DBConnection.java[m
+[1mindex d7c2d75..8ed6291 100644[m
+[1m--- a/src/main/java/com/trackit/db/DBConnection.java[m
+[1m+++ b/src/main/java/com/trackit/db/DBConnection.java[m
+[36m@@ -22,7 +22,7 @@[m [mpublic class DBConnection {[m
+             props.setProperty("serverTimezone", "UTC");[m
+             props.setProperty("allowPublicKeyRetrieval", "true");[m
+ [m
+[31m-            connection = DriverManager.getConnection(URL, props);[m
+[32m+[m[32m            connection = DriverManager.getConnection(URL, props); //connect[m
+         } catch (SQLException e) {[m
+             System.err.println("Database Connection Error: " + e.getMessage());[m
+             throw new RuntimeException("Failed to connect to database", e);[m
+[36m@@ -31,10 +31,10 @@[m [mpublic class DBConnection {[m
+ [m
+     public static synchronized DBConnection getInstance() {[m
+         if (instance == null || instance.getConnection() == null) {[m
+[31m-            instance = new DBConnection();[m
+[32m+[m[32m            instance = new DBConnection(); //agar null ho ya nh ho tab[m
+         }[m
+         return instance;[m
+[31m-    }[m
+[32m+[m[32m    } //syncronized means only one data enters at a time[m
+ [m
+     public Connection getConnection() {[m
+         try {[m
+[36m@@ -46,9 +46,9 @@[m [mpublic class DBConnection {[m
+             throw new RuntimeException("Failed to get database connection", e);[m
+         }[m
+         return connection;[m
+[31m-    }[m
+[32m+[m[32m    }[m[41m  [m
+ [m
+[31m-    public void closeConnection() {[m
+[32m+[m[32m    public void closeConnection() { //for free up the memory if closes[m[41m [m
+         if (connection != null) {[m
+             try {[m
+                 connection.close();[m
+[1mdiff --git a/src/main/java/com/trackit/ui/HabitDetailsDialog.java b/src/main/java/com/trackit/ui/HabitDetailsDialog.java[m
+[1mindex 582aa43..c3aea29 100644[m
+[1m--- a/src/main/java/com/trackit/ui/HabitDetailsDialog.java[m
+[1m+++ b/src/main/java/com/trackit/ui/HabitDetailsDialog.java[m
+[36m@@ -56,9 +56,9 @@[m [mpublic class HabitDetailsDialog extends JDialog {[m
+         JPanel detailsPanel = new JPanel(new GridBagLayout());[m
+         detailsPanel.setBorder(new TitledBorder("Habit Details"));[m
+         GridBagConstraints gbc = new GridBagConstraints();[m
+[31m-        gbc.gridx = 0;[m
+[31m-        gbc.gridy = 0;[m
+[31m-        gbc.anchor = GridBagConstraints.WEST;[m
+[32m+[m[32m        gbc.gridx = 0; //column[m[41m [m
+[32m+[m[32m        gbc.gridy = 0; //row[m
+[32m+[m[32m        gbc.anchor = GridBagConstraints.WEST; //left[m
+         gbc.insets = new Insets(5, 5, 5, 5);[m
+ [m
+         // Name field[m
+[36m@@ -90,8 +90,8 @@[m [mpublic class HabitDetailsDialog extends JDialog {[m
+         detailsPanel.add(frequencySpinner, gbc);[m
+ [m
+         // Start date chooser[m
+[31m-        gbc.gridx = 0;[m
+[31m-        gbc.gridy++;[m
+[32m+[m[32m        gbc.gridx = 0; //column[m
+[32m+[m[32m        gbc.gridy++; //row[m
+         gbc.weightx = 0;[m
+         detailsPanel.add(new JLabel("Start Date:"), gbc);[m
+         gbc.gridx = 1;[m
+[1mdiff --git a/src/main/java/com/trackit/ui/MainWindow.java b/src/main/java/com/trackit/ui/MainWindow.java[m
+[1mindex de84e58..dfd57b5 100644[m
+[1m--- a/src/main/java/com/trackit/ui/MainWindow.java[m
+[1m+++ b/src/main/java/com/trackit/ui/MainWindow.java[m
+[36m@@ -52,6 +52,7 @@[m [mpublic class MainWindow extends JFrame {[m
+     }[m
+ [m
+     private void initComponents() {[m
+[32m+[m[32m        // n, s, w, e[m
+         setLayout(new BorderLayout(15, 15)); //15px ka gap bw layouts[m
+         ((JPanel)getContentPane()).setBorder(new EmptyBorder(10, 10, 10, 10)); //10px ka gap bw content and border[m
+         [m
+[36m@@ -59,7 +60,7 @@[m [mpublic class MainWindow extends JFrame {[m
+         JPanel headerPanel = createHeaderPanel();[m
+         add(headerPanel, BorderLayout.NORTH);[m
+ [m
+[31m-        // main content panel with list and stats[m
+[32m+[m[32m        // main content panel with habit list and stats[m
+         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);[m
+         splitPane.setBorder(null);[m
+         splitPane.setDividerLocation(650); //650 px ka divider for lef panel[m
+[36m@@ -69,7 +70,7 @@[m [mpublic class MainWindow extends JFrame {[m
+         JPanel habitsPanel = new JPanel(new BorderLayout(10, 10));[m
+         habitsPanel.setBorder(BorderFactory.createCompoundBorder([m
+             new EmptyBorder(5, 5, 5, 5),[m
+[31m-            BorderFactory.createLineBorder(UIManager.getColor("Component.borderColor"), 1, true)[m
+[32m+[m[32m            BorderFactory.createLineBorder(UIManager.getColor("Component.borderColor"), 2, true)[m
+         ));[m
+         [m
+         // Search panel[m
+[36m@@ -83,13 +84,13 @@[m [mpublic class MainWindow extends JFrame {[m
+         listModel = new DefaultListModel<>();[m
+         habitList = new JList<>(listModel);[m
+         habitList.setCellRenderer(new ModernHabitListCellRenderer());[m
+[31m-        habitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);[m
+[31m-        habitList.putClientProperty("List.selectionBackground", UIManager.getColor("Component.accentColor"));[m
+[31m-        habitList.setFixedCellHeight(60);[m
+[32m+[m[32m        habitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); //1 can be selected only[m
+[32m+[m[32m        habitList.putClientProperty("List.selectionBackground", UIManager.getColor("Component.accentColor")); //bg color jab select krei, accent color depending on app theme[m
+[32m+[m[32m        habitList.setFixedCellHeight(60); //each habit cell height[m
+         [m
+         JScrollPane scrollPane = new JScrollPane(habitList);[m
+         scrollPane.setBorder(null);[m
+[31m-        habitsPanel.add(scrollPane, BorderLayout.CENTER);[m
+[32m+[m[32m        habitsPanel.add(scrollPane, BorderLayout.CENTER);  //habit panel add and center[m[41m [m
+         [m
+         // Selected habit progress[m
+         JPanel selectedProgressPanel = new JPanel(new BorderLayout(10, 5));[m
+[36m@@ -116,7 +117,7 @@[m [mpublic class MainWindow extends JFrame {[m
+         addListeners();[m
+     }[m
+ [m
+[31m-    private JPanel createHeaderPanel() {[m
+[32m+[m[32m    private JPanel createHeaderPanel() {  //graphics code let you create your own header panel[m
+         JPanel headerPanel = new JPanel(new BorderLayout(10, 10)) {[m
+             @Override[m
+             protected void paintComponent(Graphics g) {[m

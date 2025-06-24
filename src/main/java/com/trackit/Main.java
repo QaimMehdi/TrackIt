@@ -54,7 +54,7 @@ public class Main {
                     "Error starting application: " + e.getMessage(),
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
-            }
+            } //run 
         });
     }
 } 

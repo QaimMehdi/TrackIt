@@ -22,7 +22,7 @@ public class DBConnection {
             props.setProperty("serverTimezone", "UTC");
             props.setProperty("allowPublicKeyRetrieval", "true");
 
-            connection = DriverManager.getConnection(URL, props);
+            connection = DriverManager.getConnection(URL, props); //connect
         } catch (SQLException e) {
             System.err.println("Database Connection Error: " + e.getMessage());
             throw new RuntimeException("Failed to connect to database", e);
@@ -31,10 +31,10 @@ public class DBConnection {
 
     public static synchronized DBConnection getInstance() {
         if (instance == null || instance.getConnection() == null) {
-            instance = new DBConnection();
+            instance = new DBConnection(); //agar null ho ya nh ho tab
         }
         return instance;
-    }
+    } //syncronized means only one data enters at a time
 
     public Connection getConnection() {
         try {
@@ -46,9 +46,9 @@ public class DBConnection {
             throw new RuntimeException("Failed to get database connection", e);
         }
         return connection;
-    }
+    }  
 
-    public void closeConnection() {
+    public void closeConnection() { //for free up the memory if closes 
         if (connection != null) {
             try {
                 connection.close();

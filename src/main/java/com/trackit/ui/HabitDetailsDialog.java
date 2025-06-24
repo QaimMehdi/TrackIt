@@ -56,9 +56,9 @@ public class HabitDetailsDialog extends JDialog {
         JPanel detailsPanel = new JPanel(new GridBagLayout());
         detailsPanel.setBorder(new TitledBorder("Habit Details"));
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridx = 0; //column 
+        gbc.gridy = 0; //row
+        gbc.anchor = GridBagConstraints.WEST; //left
         gbc.insets = new Insets(5, 5, 5, 5);
 
         // Name field
@@ -90,8 +90,8 @@ public class HabitDetailsDialog extends JDialog {
         detailsPanel.add(frequencySpinner, gbc);
 
         // Start date chooser
-        gbc.gridx = 0;
-        gbc.gridy++;
+        gbc.gridx = 0; //column
+        gbc.gridy++; //row
         gbc.weightx = 0;
         detailsPanel.add(new JLabel("Start Date:"), gbc);
         gbc.gridx = 1;

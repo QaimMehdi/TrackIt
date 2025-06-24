@@ -52,6 +52,7 @@ public class MainWindow extends JFrame {
     }
 
     private void initComponents() {
+        // n, s, w, e
         setLayout(new BorderLayout(15, 15)); //15px ka gap bw layouts
         ((JPanel)getContentPane()).setBorder(new EmptyBorder(10, 10, 10, 10)); //10px ka gap bw content and border
         
@@ -59,7 +60,7 @@ public class MainWindow extends JFrame {
         JPanel headerPanel = createHeaderPanel();
         add(headerPanel, BorderLayout.NORTH);
 
-        // main content panel with list and stats
+        // main content panel with habit list and stats
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setBorder(null);
         splitPane.setDividerLocation(650); //650 px ka divider for lef panel
@@ -69,7 +70,7 @@ public class MainWindow extends JFrame {
         JPanel habitsPanel = new JPanel(new BorderLayout(10, 10));
         habitsPanel.setBorder(BorderFactory.createCompoundBorder(
             new EmptyBorder(5, 5, 5, 5),
-            BorderFactory.createLineBorder(UIManager.getColor("Component.borderColor"), 1, true)
+            BorderFactory.createLineBorder(UIManager.getColor("Component.borderColor"), 2, true)
         ));
         
         // Search panel
@@ -83,13 +84,13 @@ public class MainWindow extends JFrame {
         listModel = new DefaultListModel<>();
         habitList = new JList<>(listModel);
         habitList.setCellRenderer(new ModernHabitListCellRenderer());
-        habitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        habitList.putClientProperty("List.selectionBackground", UIManager.getColor("Component.accentColor"));
-        habitList.setFixedCellHeight(60);
+        habitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); //1 can be selected only
+        habitList.putClientProperty("List.selectionBackground", UIManager.getColor("Component.accentColor")); //bg color jab select krei, accent color depending on app theme
+        habitList.setFixedCellHeight(60); //each habit cell height
         
         JScrollPane scrollPane = new JScrollPane(habitList);
         scrollPane.setBorder(null);
-        habitsPanel.add(scrollPane, BorderLayout.CENTER);
+        habitsPanel.add(scrollPane, BorderLayout.CENTER);  //habit panel add and center 
         
         // Selected habit progress
         JPanel selectedProgressPanel = new JPanel(new BorderLayout(10, 5));
@@ -116,7 +117,7 @@ public class MainWindow extends JFrame {
         addListeners();
     }
 
-    private JPanel createHeaderPanel() {
+    private JPanel createHeaderPanel() {  //graphics code let you create your own header panel
         JPanel headerPanel = new JPanel(new BorderLayout(10, 10)) {
             @Override
             protected void paintComponent(Graphics g) {
